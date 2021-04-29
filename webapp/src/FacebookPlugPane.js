@@ -22,20 +22,23 @@ export default function FacebookPlugPane({
   const playerRef = useRef(null);
   const [ready, setReady] = useState(false);
 
-  useEffect(async () => {
-    if (window.FB || window.fbAsyncInit) {
-      return;
-    }
-    window.fbAsyncInit = () => {
-      window.FB.XFBML.parse(playerRef.current);
-      setAPILoaded(true);
-    };
-    loadScript("https://connect.facebook.net/en_US/sdk.js", (err, script) => {
-      if (err) {
-        console.error(err);
+  useEffect(() => {
+    async function loadAPI() {
+      if (window.FB || window.fbAsyncInit) {
         return;
       }
-    });
+      window.fbAsyncInit = () => {
+        window.FB.XFBML.parse(playerRef.current);
+        setAPILoaded(true);
+      };
+      loadScript("https://connect.facebook.net/en_US/sdk.js", (err, script) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+      });
+    }
+    loadAPI();
   }, []);
 
   useEffect(() => {

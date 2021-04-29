@@ -6,8 +6,6 @@ import picksBaseline from "./picks.js";
 import players from "./players.js";
 import teams from "./teams.js";
 import useViewport from "./hooks/useViewport.js";
-import whichPickInRound from "./whichPickInRound.js";
-import whichRound from "./whichRound.js";
 
 // https://www.youtube.com/watch?v=BLnfG6_Vjt0
 export default function HistoryModal({

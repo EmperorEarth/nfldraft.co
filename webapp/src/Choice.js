@@ -13,7 +13,7 @@ export default function Choice({
   votes,
   ...props
 }) {
-  const { mobile, width } = useViewport();
+  const { mobile } = useViewport();
   let backgroundColor = style?.backgroundColor,
     color = style?.color,
     styles = {

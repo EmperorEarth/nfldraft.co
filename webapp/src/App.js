@@ -1,20 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 
-import Alert from "./Alert.js";
 import Div from "./Div.js";
-import Choice from "./Choice.js";
 import HistoryModal from "./HistoryModal.js";
+import OnboardingModal from "./OnboardingModal.js";
 import PickIsInModal from "./PickIsInModal.js";
 import Poll from "./Poll.js";
 import picksStartingPoint from "./picks.js";
 import { useUser } from "./UserContext.js";
-import teams from "./teams.js";
 import usePath from "./hooks/usePath.js";
 import useViewport from "./hooks/useViewport.js";
 import pickIsInJingle from "./pick-is-in.mp3";
 
 export default function App() {
-  const [alertActive, setAlertActive] = useState(false);
   const [draftedPlayers, setDraftedPlayers] = useState([]);
   const { height, width } = useViewport();
   const [currentPick, setCurrentPick] = useState(null);
@@ -24,12 +21,14 @@ export default function App() {
   const [lastFixPlayer, setLastFixPlayer] = useState({});
   const [lastFixTeam, setLastFixTeam] = useState({});
   const [myVotes, setMyVotes] = useState([]);
+  const [onboardingStage, setOnboardingStage] = useState(0);
   const path = usePath();
   const [pickIsInModalActive, setPickIsInModalActive] = useState(false);
   const [picks, setPicks] = useState(picksStartingPoint);
   const pickIsInRef = useRef(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [startingStatus, setStartingStatus] = useState({});
-  const [user, userDispatch] = useUser();
+  const [user] = useUser();
   const userID = user.id;
   const [votes, setVotes] = useState([]);
   const [ws, setWS] = useState(null);
@@ -206,6 +205,7 @@ export default function App() {
         currentTeam={picks[currentPick - 1].team}
         draftedPlayers={draftedPlayers}
         due={due}
+        jumpOnboard={() => setShowOnboarding(true)}
         myVote={myVotes[currentPick] || null}
         path={path}
         showHistory={() => setHistoryModalActive(true)}
@@ -226,7 +226,17 @@ export default function App() {
         currentPick={currentPick}
         dismissModal={() => setPickIsInModalActive(false)}
         draftedPlayers={draftedPlayers}
+        jumpOnboard={() => setShowOnboarding(true)}
+        onboardingStage={onboardingStage}
         picks={picks}
+      />
+      <OnboardingModal
+        active={showOnboarding}
+        currentPick={currentPick}
+        dismissModal={() => setShowOnboarding(false)}
+        onboardingStage={onboardingStage}
+        picks={picks}
+        setOnboardingStage={setOnboardingStage}
       />
       <audio id="pickIsInNode" ref={pickIsInRef}>
         <source src={pickIsInJingle} type="audio/mp3" />

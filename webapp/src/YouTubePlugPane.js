@@ -24,19 +24,22 @@ export default function YouTubePlugPane({
   const playerRef = useRef(null);
   const [ready, setReady] = useState(false);
 
-  useEffect(async () => {
-    if (window.YT || window.onYouTubeIframeAPIReady) {
-      return;
-    }
-    window.onYouTubeIframeAPIReady = () => {
-      setAPILoaded(true);
-    };
-    loadScript("https://www.youtube.com/iframe_api", (err, script) => {
-      if (err) {
-        console.error(err);
+  useEffect(() => {
+    async function loadAPI() {
+      if (window.YT || window.onYouTubeIframeAPIReady) {
         return;
       }
-    });
+      window.onYouTubeIframeAPIReady = () => {
+        setAPILoaded(true);
+      };
+      loadScript("https://www.youtube.com/iframe_api", (err, script) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+      });
+    }
+    loadAPI();
   }, []);
 
   useEffect(() => {

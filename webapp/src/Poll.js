@@ -1,6 +1,4 @@
-import loadScript from "load-script";
 import remove from "lodash.remove";
-import { renderToStaticMarkup } from "react-dom/server";
 import { useEffect, useRef, useState } from "react";
 
 import Div from "./Div.js";
@@ -10,7 +8,6 @@ import Logo from "./logos/Logo.js";
 import PlugPane from "./PlugPane.js";
 import TeamLogo from "./logos/TeamLogo.js";
 import hsb from "./lib/hsb.js";
-import picks from "./picks.js";
 import rawPlayers from "./players.js";
 import teamSubreddits from "./teamSubreddits.js";
 import teams from "./teams.js";
@@ -19,6 +16,7 @@ import whichPickInRound from "./whichPickInRound.js";
 import whichRound from "./whichRound.js";
 
 const playersBase = Object.values(rawPlayers).map((player) => ({
+  backgroundColor: player.backgroundColor,
   nameLowerCase: player.name.toLowerCase(),
   name: player.name,
   position: player.position,
@@ -30,6 +28,7 @@ export default function Poll({
   currentTeam,
   draftedPlayers,
   due,
+  jumpOnboard,
   myVote,
   path,
   showHistory = () => {},
@@ -38,7 +37,7 @@ export default function Poll({
 }) {
   const [currentPlugPaneIndex, setCurrentPlugPaneIndex] = useState(0);
   const [facebookAPILoaded, setFacebookAPILoaded] = useState(false);
-  const { height, mobile, width } = useViewport();
+  const { mobile, width } = useViewport();
   const [historyPressed, setHistoryPressed] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const mostVotes = !votes
@@ -54,8 +53,8 @@ export default function Poll({
   for (let i = 0; i < players.length; i++) {
     players[i].votes = parseInt(votes[players[i].name]) || 0;
   }
-  const plugPaneHeight =
-    (height - (mobile ? 0 : 101)) / 2 - 104 - (mobile ? 0 : 17);
+  // const plugPaneHeight =
+  //   (height - (mobile ? 0 : 101)) / 2 - 104 - (mobile ? 0 : 17);
   const plugPanesNode = useRef(null);
   const plugPaneWidth = Math.min(width, 960) - 32 - 32;
   remove(players, (player) =>
@@ -242,7 +241,7 @@ export default function Poll({
                 apiLoaded={facebookAPILoaded}
                 direct={true}
                 channel={path.slice(3, path.lastIndexOf("/"))}
-                focused={currentPlugPaneIndex == 0}
+                focused={currentPlugPaneIndex === 0}
                 id="analyst-stream"
                 mute={() => setMuted(true)}
                 muted={muted}
@@ -267,7 +266,7 @@ export default function Poll({
                 apiLoaded={twitchAPILoaded}
                 channel={path.slice(3)}
                 direct={true}
-                focused={currentPlugPaneIndex == 0}
+                focused={currentPlugPaneIndex === 0}
                 id="analyst-stream"
                 mute={() => setMuted(true)}
                 muted={muted}
@@ -290,7 +289,7 @@ export default function Poll({
               <PlugPane
                 apiLoaded={youTubeAPILoaded}
                 direct={true}
-                focused={currentPlugPaneIndex == 0}
+                focused={currentPlugPaneIndex === 0}
                 id="analyst-stream"
                 mute={() => setMuted(true)}
                 muted={muted}
@@ -374,26 +373,28 @@ export default function Poll({
             width: "100%",
           }}
         >
-          {sortedPlayers.map((player, index) => (
-            <Choice
-              body={player.name}
-              key={index}
-              onPress={() => {
-                setPlayerNameSearch("");
-                setPlayerPositionSearch("ALL");
-                voteForPlayer({
-                  number: currentPick,
-                  player: player.name,
-                });
-              }}
-              ratio={
-                mostVotes === 0 ? undefined : (player.votes || 0) / mostVotes
-              }
-              votes={player.votes || 0}
-            />
-          ))}
+          {sortedPlayers.map(({ backgroundColor, name, votes }, index) => {
+            return (
+              <Choice
+                body={name}
+                key={index}
+                onPress={() => {
+                  setPlayerNameSearch("");
+                  setPlayerPositionSearch("ALL");
+                  voteForPlayer({
+                    number: currentPick,
+                    player: name,
+                  });
+                }}
+                ratio={mostVotes === 0 ? undefined : (votes || 0) / mostVotes}
+                style={{ backgroundColor: backgroundColor }}
+                votes={votes || 0}
+              />
+            );
+          })}
         </Div>
         <Div
+          onPress={jumpOnboard}
           style={{
             alignItems: "flex-end",
             backgroundColor: "white",
@@ -469,7 +470,7 @@ export default function Poll({
         >
           <PlugPane
             apiLoaded={youTubeAPILoaded}
-            focused={currentPlugPaneIndex == 0}
+            focused={currentPlugPaneIndex === 0}
             id="analyst-stream-1"
             mute={() => setMuted(true)}
             muted={muted}
@@ -481,7 +482,7 @@ export default function Poll({
           />
           <PlugPane
             apiLoaded={youTubeAPILoaded}
-            focused={currentPlugPaneIndex == 1}
+            focused={currentPlugPaneIndex === 1}
             id="analyst-stream-2"
             mute={() => setMuted(true)}
             muted={muted}
@@ -494,7 +495,7 @@ export default function Poll({
           <PlugPane
             apiLoaded={twitchAPILoaded}
             channel="nfl"
-            focused={currentPlugPaneIndex == 2}
+            focused={currentPlugPaneIndex === 2}
             id="analyst-stream-3"
             mute={() => setMuted(true)}
             muted={muted}
@@ -564,7 +565,7 @@ function merge(left, right) {
   while (left.length && right.length) {
     if (
       left[0].votes > right[0].votes ||
-      (left[0].votes == right[0].votes &&
+      (left[0].votes === right[0].votes &&
         left[0].nameLowerCase < right[0].nameLowerCase)
     ) {
       arr.push(left.shift());

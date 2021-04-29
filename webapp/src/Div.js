@@ -1,13 +1,14 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 
 import useViewport from "./hooks/useViewport.js";
 
 export default forwardRef(function Div(
   {
     children,
-    onPressIn,
-    onPressOut,
-    onPress,
+    onDoublePress = () => {},
+    onPressIn = () => {},
+    onPressOut = () => {},
+    onPress = () => {},
     // ref,
     style,
     ...props
@@ -16,6 +17,7 @@ export default forwardRef(function Div(
 ) {
   const { mobile } = useViewport();
   const height = style?.height || undefined;
+  const [pressTimeout, setPressTimeout] = useState(null);
   const width = style?.width || undefined;
   const styles = {
     alignContent: "flex-start",
@@ -46,7 +48,19 @@ export default forwardRef(function Div(
 
   return mobile ? (
     <div
-      onClick={onPress}
+      onClick={(event) => {
+        if (pressTimeout !== null) {
+          onDoublePress(event);
+          return;
+        }
+        onPress(event);
+        setPressTimeout(
+          setTimeout(() => {
+            clearTimeout(pressTimeout);
+            setPressTimeout(null);
+          }, 300)
+        );
+      }}
       onTouchEnd={onPressOut}
       onTouchStart={onPressIn}
       ref={ref}
@@ -57,7 +71,19 @@ export default forwardRef(function Div(
     </div>
   ) : (
     <div
-      onClick={onPress}
+      onClick={(event) => {
+        if (pressTimeout !== null) {
+          onDoublePress(event);
+          return;
+        }
+        onPress(event);
+        setPressTimeout(
+          setTimeout(() => {
+            clearTimeout(pressTimeout);
+            setPressTimeout(null);
+          }, 300)
+        );
+      }}
       onMouseOut={onPressOut}
       onMouseOver={onPressIn}
       ref={ref}

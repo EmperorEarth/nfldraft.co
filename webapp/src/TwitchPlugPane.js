@@ -21,17 +21,20 @@ export default function TwitchPlugPane({
   const [player, setPlayer] = useState(null);
   const playerRef = useRef(null);
 
-  useEffect(async () => {
-    if (window.Twitch) {
-      return;
-    }
-    loadScript("https://embed.twitch.tv/embed/v1.js", (err, script) => {
-      if (err) {
-        console.error(err);
+  useEffect(() => {
+    async function loadAPI() {
+      if (window.Twitch) {
         return;
       }
-      setAPILoaded(true);
-    });
+      loadScript("https://embed.twitch.tv/embed/v1.js", (err, script) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        setAPILoaded(true);
+      });
+    }
+    loadAPI();
   }, []);
 
   useEffect(() => {

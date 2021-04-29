@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Div from "./Div.js";
 import Logo from "./logos/Logo.js";
@@ -8,8 +8,6 @@ import picksBaseline from "./picks.js";
 import players from "./players.js";
 import teams from "./teams.js";
 import useViewport from "./hooks/useViewport.js";
-import whichPickInRound from "./whichPickInRound.js";
-import whichRound from "./whichRound.js";
 
 // https://www.youtube.com/watch?v=BLnfG6_Vjt0
 export default function PickIsInModal({
@@ -17,6 +15,7 @@ export default function PickIsInModal({
   currentPick = 1,
   dismissModal = () => {},
   draftedPlayers = [],
+  jumpOnboard = () => {},
   picks = picksBaseline,
 }) {
   const [ctaPressed, setCTAPressed] = useState(false);
@@ -192,7 +191,7 @@ export default function PickIsInModal({
               }}
             >
               <Div
-                onPress={() => {}}
+                onPress={jumpOnboard}
                 onPressIn={() => setLearnMorePressed(true)}
                 onPressOut={() => setLearnMorePressed(false)}
                 style={{
@@ -225,7 +224,15 @@ export default function PickIsInModal({
                 Learn More
               </Div>
               <Div
-                onPress={() => {}}
+                onPress={() => {
+                  window.open(
+                    `https://app.aliask.co/0.6.0/find/find-person?choices=${
+                      teams.find(
+                        (team) => team.name === picks[currentPick - 2].team
+                      ).choice
+                    }&distance=100,LessThan,Mile`
+                  );
+                }}
                 onPressIn={() => setCTAPressed(true)}
                 onPressOut={() => setCTAPressed(false)}
                 style={{

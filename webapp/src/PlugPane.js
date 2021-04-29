@@ -1,7 +1,3 @@
-import loadScript from "load-script";
-import { useEffect, useRef, useState } from "react";
-
-import Div from "./Div.js";
 import FacebookPlugPane from "./FacebookPlugPane.js";
 import TwitchPlugPane from "./TwitchPlugPane.js";
 import YouTubePlugPane from "./YouTubePlugPane.js";
@@ -25,7 +21,6 @@ export default function PlugPane({
           {...props}
         />
       );
-      break;
     case "twitch":
       return (
         <TwitchPlugPane
@@ -34,7 +29,6 @@ export default function PlugPane({
           {...props}
         />
       );
-      break;
     case "youtube":
       return (
         <YouTubePlugPane
@@ -43,7 +37,6 @@ export default function PlugPane({
           {...props}
         />
       );
-      break;
     default:
       break;
   }
