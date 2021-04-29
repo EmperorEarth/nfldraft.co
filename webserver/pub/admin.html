@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Aliask NFL Draft 2021 - Admin</title>
+	</head>
+	<body onload="onloadBody()">
+		<div>
+			<h1>
+				Pick #<span id="current-pick-number">___</span> -
+				<span id="time-left">HH:MM:SS</span>
+			</h1>
+			<form>
+				<input
+					id="current-pick-player"
+					list="current-pick-players"
+					oninput="clearStatuses()"
+					required
+				/>
+				<datalist id="current-pick-players" placeholder="Player">
+				</datalist>
+				<button
+					disabled="true"
+					id="current-pick-submit-button"
+					onclick="currentPickPlayerSubmit(event)"
+				>
+					Submit Pick
+				</button>
+			</form>
+			<div
+				id="current-pick-form-status"
+				style="
+					align-items: center;
+					color: red;
+					display: flex;
+					height: 32px;
+				"
+			></div>
+		</div>
+		<div>
+			<h1>Fix</h1>
+			<form id="fix-type-form">
+				<select
+					disabled="true"
+					id="fix-type-select"
+					onchange="onchangeFixType(event)"
+					required
+				>
+					<option disabled selected value></option>
+					<option value="fixTeam">Pick Team</option>
+					<option value="fixPlayer">Pick Player</option>
+					<option value="fixDue">Current Pick Due</option>
+					<option value="fixNumber">Current Pick Number</option>
+				</select>
+			</form>
+			<form id="fix-form"></form>
+			<div
+				id="fix-form-status"
+				style="
+					align-items: center;
+					color: red;
+					display: flex;
+					height: 32px;
+				"
+			></div>
+		</div>
+		<input id="current-pick-due" type="hidden" />
+		<input id="fix-due-time-state" type="hidden" />
+		<script src="./admin.js" type="text/javascript"></script>
+		<script src="./players.js" type="text/javascript"></script>
+	</body>
+</html>

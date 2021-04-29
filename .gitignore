@@ -1,0 +1,27 @@
+# sensitive
+*.ecdsa
+*.ecdsa.pub
+*.hash
+
+# binaries
+*.exe
+webserver/webserver
+
+# logs
+*.log
+npm-debug.log.*
+yarn-error.log
+
+# build artifacts
+*~
+node_modules
+bundle.js
+bundle.js.map
+*.jsbundle
+
+# OS artifacts
+.DS_Store
+
+# program artifacts
+picks-test.json
+players-test.json
